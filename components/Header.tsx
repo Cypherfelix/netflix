@@ -12,12 +12,11 @@ function Header() {
       } else {
         setIsScrolled(false)
       }
+    }
+    window.addEventListener('scroll', handleScroll)
 
-      window.addEventListener('scroll', handleScroll)
-
-      return () => {
-        window.removeEventListener('scroll', handleScroll)
-      }
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
