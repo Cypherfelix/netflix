@@ -21,7 +21,8 @@ function Modal() {
   const [trailer, setTrailer] = useState('')
   const [muted, setMuted] = useState(true)
   const [playing, setPlaying] = useState(true)
-  const [data, setData] = useState(null)
+  const [data, setData] = useState()
+  const [result, setResult] = useState([])
 
   useEffect(() => {
     if (!movie) {
@@ -46,7 +47,7 @@ function Modal() {
       if (data?.genres) {
         setGenres(data.genres)
       }
-
+      setResult(data.videos.results)
       setData(data)
     }
 
@@ -71,7 +72,7 @@ function Modal() {
           <XIcon className="h-6 w-6" />
         </button>
 
-        {data?.videos.results.length == 0 ? (
+        {result.length == 0 ? (
           <div className="relative pt-[56.25%]">
             <Image
               src={`https://image.tmdb.org/t/p/w500${
