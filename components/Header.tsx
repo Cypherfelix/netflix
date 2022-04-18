@@ -1,9 +1,11 @@
 import { BellIcon, SearchIcon } from '@heroicons/react/solid'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import useAuth from '../hooks/useAuth'
 
 function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const { logout, error } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +22,14 @@ function Header() {
     }
   }, [])
 
+  const handleClick = async (type: string) => {
+    if (type == 'logout') {
+      await logout()
+      if (error) {
+      }
+    }
+  }
+
   return (
     <header
       className={`w-screen overflow-x-hidden ${isScrolled && 'bg-[#141414]'}`}
@@ -30,6 +40,7 @@ function Header() {
           width={100}
           height={100}
           className="cursor-pointer object-contain"
+          onClick={() => handleClick('logout')}
         />
 
         <ul className="hidden space-x-4 md:flex">
@@ -51,6 +62,7 @@ function Header() {
             src="https://rb.gy/g1pwyx"
             alt=""
             className="cursor-pointer rounded"
+            onClick={() => handleClick('logout')}
           />
         </Link>
       </div>
