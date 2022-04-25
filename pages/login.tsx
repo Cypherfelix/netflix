@@ -5,16 +5,25 @@ import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import useAuth from '../hooks/useAuth'
 import { CircularProgress } from '@mui/material'
+import { useRouter } from 'next/router'
+import { useRecoilState } from 'recoil'
+import { isSignUpState } from '../atom/loginAtom'
 
 interface Inputs {
   email: string
   password: string
 }
 
+interface Props {
+  isSignUp: boolean
+}
+
 function login() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const [login, setLogin] = useState(false)
   const { signIn, signUp, error, loading } = useAuth()
+  const [isSignUp, setIsSignUp] = useRecoilState(isSignUpState)
+  const router = useRouter()
 
   const {
     register,
@@ -22,30 +31,17 @@ function login() {
     watch,
     formState: { errors },
   } = useForm<Inputs>()
-  console.log(loading)
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data)
-    if (login) {
+    if (!isSignUp) {
       await signIn(data.email, data.password)
-      console.log(error)
     } else {
       await signUp(data.email, data.password)
-      console.log(error)
-    }
-
-    if (
-      error == 'Firebase: Error (auth/wrong-password).' ||
-      error == 'Firebase: Error (auth/user-not-found).'
-    ) {
-      closeSnackbar()
-      enqueueSnackbar('Incorrect Email or Password', {
-        variant: 'error',
-        preventDuplicate: true,
-        autoHideDuration: 2000,
-      })
     }
   }
+
+  const onClick = () => {}
 
   return (
     <div className="relative flex h-screen w-screen bg-black md:items-center md:justify-center md:bg-transparent">
@@ -71,7 +67,9 @@ function login() {
         onSubmit={handleSubmit(onSubmit)}
         className="relative mt-24 space-y-8 rounded bg-black/75 py-10 px-6 md:mt-0 md:max-w-md md:px-14"
       >
-        <h1 className="text-4xl font-semibold">Sign In</h1>
+        <h1 className="text-4xl font-semibold">
+          {isSignUp ? 'Sign Up' : 'Sign In'}
+        </h1>
         <div className="space-y-4">
           <label className="inline-block w-full ">
             <input
@@ -112,20 +110,20 @@ function login() {
             className="w-full rounded bg-[#e50914] py-3 font-semibold"
             onClick={() => setLogin(true)}
           >
-            Sign in
+            {isSignUp ? 'Register Account' : 'Sign In'}
           </button>
         ) : (
           <CircularProgress></CircularProgress>
         )}
 
         <div className="text-[gray]">
-          New to Netflix?{' '}
+          {isSignUp ? 'Already have an account? ' : 'New to Netflix? '}
           <button
-            type="submit"
+            type="button"
             className="text-white hover:underline"
-            onClick={() => setLogin(false)}
+            onClick={() => setIsSignUp(!isSignUp)}
           >
-            Sign up now
+            {isSignUp ? 'Sign In Now' : 'Sign Up Now'}
           </button>
         </div>
       </form>
